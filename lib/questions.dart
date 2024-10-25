@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:mobile_application/constants.dart';
 
 class Question extends PositionComponent {
-  final String questionText; // Text for the question
+  final List<int> numbers; // Text for the question
 
-  Question({required this.questionText}) {
+  Question({required this.numbers}) {
     size = Vector2(gameWidth * 3 / 4, 400);
     position = Vector2(0, - gameHeight / 2 + 300);
-    anchor = Anchor.center; // Anchor the rectangle to its center
+    anchor = Anchor.center;
   }
 
   @override
@@ -36,7 +36,7 @@ class Question extends PositionComponent {
     // Prepare the text painter
     final textPainter = TextPainter(
       text: TextSpan(
-        text: questionText,
+        text: '${numbers[0]} + ${numbers[1]} = ?',
         style: const TextStyle(
           color: Colors.black,
           fontSize: 60,

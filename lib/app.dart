@@ -2,6 +2,8 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_application/constants.dart';
 import 'package:mobile_application/game/go_green_game.dart';
+import 'package:mobile_application/button_screen.dart';
+import 'package:mobile_application/game/go_green_world.dart';
 
 class GameMath extends StatefulWidget {
   const GameMath({super.key});
@@ -31,10 +33,20 @@ class _GameMathState extends State<GameMath> {
         body: SafeArea(
           child: Center(
             child: FittedBox(
-              child: SizedBox(
-                  width: gameWidth,
-                  height: gameHeight,
-                  child: GameWidget(game: game)),
+              child: Stack(
+                children: [SizedBox(
+                    width: gameWidth,
+                    height: gameHeight,
+                    child: GameWidget(game: game)
+                    ),
+                    SizedBox(
+                      width: gameWidth,
+                      height: gameHeight,
+                      child: ButtonScreen(game:game, world: GoGreenWorld(),)
+                    )
+
+                ]
+              ),
                   
             ),
           ),
