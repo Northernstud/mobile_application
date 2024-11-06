@@ -4,19 +4,23 @@ import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_application/constants.dart';
 
-class Road extends ParallaxComponent {
+class Background extends ParallaxComponent {
+  void stopBackground() {
+    parallax?.baseVelocity = Vector2.zero();
+  }
   @override
   Future<void> onLoad() async {
     super.onLoad();
 
     parallax = await Parallax.load(
-      [ParallaxImageData('road_3.png')],
+      [ParallaxImageData('background-2.png')],
       baseVelocity: Vector2(0, -800),
       velocityMultiplierDelta: Vector2(1.0, 1.0),
       repeat: ImageRepeat.repeatY,
     );
 
-    position = Vector2(-220, -gameHeight / 2);//-220
+    size = Vector2(game.size.x, game.size.y);
+    position = Vector2(-gameWidth / 2, -gameHeight / 2);
     anchor = Anchor.topLeft;
   }
 }

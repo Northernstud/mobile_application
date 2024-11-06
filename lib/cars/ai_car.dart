@@ -7,6 +7,7 @@ class AiCar extends SpriteComponent with HasGameRef<GoGreenGame> {
   late double xPosition;
   late double yPosition;
   late String carModel;
+  bool isMoving = true; // Flag to control movement
 
   AiCar(this.xPosition, this.carModel, this.yPosition);
 
@@ -22,7 +23,19 @@ class AiCar extends SpriteComponent with HasGameRef<GoGreenGame> {
   void update(double dt) {
     super.update(dt);
 
-    position.y -= 90 * dt;
-    print('Car moved to new Y position: ${position.y}');
+    // Only move if isMoving is true
+    if (isMoving) {
+      position.y -= 10 * dt;
+
+      // Check if the car has reached the finish line
+      if (position.y <= -420) {
+        position.y = -420; // Ensure exact position
+        isMoving = false;  // Stop the car from moving further
+      }
+    }
+  }
+
+  void stop() {
+    isMoving = false;
   }
 }

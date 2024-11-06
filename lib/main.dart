@@ -4,7 +4,7 @@ import 'package:mobile_application/app.dart';
 
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized(); //380
   Flame.device.fullScreen();
   Flame.device.setPortrait();
 

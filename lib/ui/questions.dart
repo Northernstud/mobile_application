@@ -6,8 +6,8 @@ class Question extends PositionComponent {
   final List<int> numbers; // Text for the question
 
   Question({required this.numbers}) {
-    size = Vector2(gameWidth * 3 / 4, 400);
-    position = Vector2(0, - gameHeight / 2 + 300);
+    size = Vector2(gameWidth * 3 / 4, 200);
+    position = Vector2(0, - gameHeight / 2 + 200);
     anchor = Anchor.center;
   }
 
@@ -22,7 +22,6 @@ class Question extends PositionComponent {
 
     
 
-    // Draw the rounded rectangle
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(0, 0, width, height),
@@ -33,7 +32,6 @@ class Question extends PositionComponent {
         ..style = PaintingStyle.fill,
     );
 
-    // Prepare the text painter
     final textPainter = TextPainter(
       text: TextSpan(
         text: '${numbers[0]} + ${numbers[1]} = ?',
@@ -47,7 +45,7 @@ class Question extends PositionComponent {
     );
 
     textPainter.layout();
-    // Center the text inside the rounded rectangle
+
     textPainter.paint(canvas, Offset(
       (size.x - textPainter.width) / 2,
       (size.y - textPainter.height) / 2,

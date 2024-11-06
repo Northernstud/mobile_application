@@ -18,6 +18,7 @@ class _ButtonScreenState extends State<ButtonScreen> {
   late List<int> answerList;
   late int correctAnswer;
   late List<Color> buttonColors;
+  bool buttonsEnabled = true; // Flag to disable buttons
 
   @override
   void initState() {
@@ -26,8 +27,10 @@ class _ButtonScreenState extends State<ButtonScreen> {
   }
 
   void _generateAnswers() {
+    // Fetch the latest numbers from GoGreenWorld
     correctAnswer = widget.world.numbers.reduce((a, b) => a + b);
 
+    // Create a set to store unique answers
     Set<int> answers = {correctAnswer};
     while (answers.length < 4) {
       int randomAnswer = _random.nextInt(21);
@@ -36,9 +39,11 @@ class _ButtonScreenState extends State<ButtonScreen> {
       }
     }
 
+    // Convert set to list and shuffle
     answerList = answers.toList();
     answerList.shuffle(_random);
 
+    // Initialize button colors
     buttonColors = List<Color>.filled(4, Colors.white);
   }
 
@@ -60,10 +65,7 @@ class _ButtonScreenState extends State<ButtonScreen> {
           left: positions[index].dx,
           top: positions[index].dy,
           child: GestureDetector(
-            onTap: () {
-              bool isCorrect = answerList[index] == correctAnswer;
-              _handleTap(index, isCorrect);
-            },
+            onTap: buttonsEnabled ? () => _handleTap(index) : null,
             child: Container(
               width: buttonWidth,
               height: buttonHeight,
@@ -87,18 +89,24 @@ class _ButtonScreenState extends State<ButtonScreen> {
     );
   }
 
-  void _handleTap(int index, bool isCorrect) {
-  setState(() {
-    buttonColors[index] = isCorrect ? Colors.green : Colors.red;
+  void _handleTap(int index) {
+    bool isCorrect = answerList[index] == correctAnswer;
+    setState(() {
+      buttonColors[index] = isCorrect ? Colors.green : Colors.red;
+      buttonsEnabled = !isCorrect; // Disable buttons if correct
+    });
 
-  });
+    if (isCorrect) {
+      widget.world.setAnswerCorrect(true); // Ensure this triggers the update
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(isCorrect ? 'Correct!' : 'Wrong!'),
-      backgroundColor: isCorrect ? Colors.green : Colors.red,
-    ),
-  );
-}
-
+      // Highlight the correct answer for 1 second
+      Future.delayed(const Duration(seconds: 1), () {
+        setState(() {
+          widget.world.setNewQuestion(true);
+          _generateAnswers(); // Update answers for new question
+          buttonsEnabled = true; // Re-enable buttons
+        });
+      });
+    }
+  }
 }
