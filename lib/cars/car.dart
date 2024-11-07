@@ -25,8 +25,10 @@ class Car extends SpriteComponent with HasGameRef<GoGreenGame> {
 
   @override
   void update(double dt) {
+    if (!isMoving) return;  // Don't update if not moving
     super.update(dt);
-    if (shouldUpdatePosition && isMoving) {
+    
+    if (shouldUpdatePosition) {
       double moveAmount = MOVEMENT_SPEED * dt;
       distanceMoved += moveAmount;
       position.y -= moveAmount;

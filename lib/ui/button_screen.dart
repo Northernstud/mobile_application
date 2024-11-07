@@ -90,23 +90,26 @@ class _ButtonScreenState extends State<ButtonScreen> {
   }
 
   void _handleTap(int index) {
+    if (widget.world.isPaused) return;  // Don't handle taps if game is paused
+    
     bool isCorrect = answerList[index] == correctAnswer;
     setState(() {
       buttonColors[index] = isCorrect ? Colors.green : Colors.red;
-      buttonsEnabled = !isCorrect; // Disable buttons if correct
+      buttonsEnabled = !isCorrect;
     });
 
     if (isCorrect) {
-      widget.world.setAnswerCorrect(true); // Ensure this triggers the update
+      widget.world.setAnswerCorrect(true);
 
-      // Highlight the correct answer for 1 second
-      Future.delayed(const Duration(seconds: 1), () {
-        setState(() {
-          widget.world.setNewQuestion(true);
-          _generateAnswers(); // Update answers for new question
-          buttonsEnabled = true; // Re-enable buttons
+      if (!widget.world.isPaused) {  // Only schedule new question if game isn't paused
+        Future.delayed(const Duration(seconds: 1), () {
+          setState(() {
+            widget.world.setNewQuestion(true);
+            _generateAnswers();
+            buttonsEnabled = true;
+          });
         });
-      });
+      }
     }
   }
 }

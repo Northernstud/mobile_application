@@ -16,6 +16,8 @@ class GoGreenWorld extends World with HasGameRef<GoGreenGame> {
   Car? playerCar;
   AiCar? aiCar;
   Finish? finish;
+  Background? background;
+  Road? road;
   bool correctness = false;
   bool newQuestion = false;
   bool isPaused = false;
@@ -50,9 +52,11 @@ class GoGreenWorld extends World with HasGameRef<GoGreenGame> {
       ..playerCar = playerCar
       ..aiCar = aiCar;
 
-    // Add components to the world
-    add(Background());
-    add(Road());
+    background = Background();
+    road = Road();
+
+    add(background!);
+    add(road!);
     add(finish as Component);
     if (playerCar != null) add(playerCar!);
     if (aiCar != null) add(aiCar!);
@@ -76,19 +80,28 @@ class GoGreenWorld extends World with HasGameRef<GoGreenGame> {
     }
   }
 
+  void stopAllMovement() {
+    if (isPaused) return;  // Prevent multiple calls
+    
+    isPaused = true;
+    playerCar?.stop();
+    aiCar?.stop();
+    background?.stopBackground();
+    road?.stopRoad();
+
+
+    
+    print("Game has ended, all movement stopped.");
+  }
+
   @override
   void update(double dt) {
+    if (isPaused) return;
+    super.update(dt);
+    
     if (newQuestion) {
       print("New Question just set");
       newQuestion = false;
     }
-
-    if (isPaused) return;
-    super.update(dt);
-  }
-
-  void pauseGame() {
-    print("game paused!");
-    isPaused = true;
   }
 }

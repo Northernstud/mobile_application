@@ -5,9 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:mobile_application/constants.dart';
 
 class Background extends ParallaxComponent {
-  void stopBackground() {
-    parallax?.baseVelocity = Vector2.zero();
-  }
   @override
   Future<void> onLoad() async {
     super.onLoad();
@@ -23,4 +20,9 @@ class Background extends ParallaxComponent {
     position = Vector2(-gameWidth / 2, -gameHeight / 2);
     anchor = Anchor.topLeft;
   }
+
+  void stopBackground() {
+    parallax?.baseVelocity = Vector2.zero();
+  }
+  
 }
