@@ -15,7 +15,7 @@ class Finish extends SpriteComponent with HasGameRef<GoGreenGame> {
 
   @override
   FutureOr<void> onLoad() async {
-    world = gameRef.gameWorld;  // Get reference to the world
+    world = gameRef.gameWorld;
     sprite = await Sprite.load("finish.png");
     position = Vector2(0, -(gameRef.size.y / 2) - size.y / 2 - 20);
     anchor = Anchor.center;
@@ -26,24 +26,29 @@ class Finish extends SpriteComponent with HasGameRef<GoGreenGame> {
   void update(double dt) {
     super.update(dt);
 
-    if ((playerCar!.position.y <= -380 || aiCar!.position.y <= -380)) {
-      shouldMove = true;
-      gameEnded = true;
-      // Stop all movement immediately when a car reaches the finish line
-      world.stopAllMovement();
-      playerCar?.stop();
-      aiCar?.stop();
-    }
+    if (!gameEnded) {
+      if (playerCar!.position.y <= -380 || aiCar!.position.y <= -380) {
+        shouldMove = true;
+        targetY = (playerCar!.position.y <= -380) ? playerCar!.position.y : aiCar!.position.y;
+      }
 
-    if (shouldMove && position.y < targetY) {
-      double speed = 720;
-      position.y += dt * speed;
-      
-      if (position.y >= targetY) {
-        position.y = targetY;
-        shouldMove = false;
+      if (shouldMove) {
+        double speed = 720;
+        position.y += dt * speed;
+
+        if (position.y >= targetY) {
+          position.y = targetY;
+          shouldMove = false;
+          stopGame();
+        }
       }
     }
   }
-}
 
+  void stopGame() {
+    gameEnded = true;
+    world.stopAllMovement();
+    playerCar?.stop();
+    aiCar?.stop();
+  }
+}

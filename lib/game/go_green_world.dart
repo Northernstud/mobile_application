@@ -79,21 +79,15 @@ class GoGreenWorld extends World with HasGameRef<GoGreenGame> {
       numbers[1] = _random.nextInt(10);
     }
   }
-
   void stopAllMovement() {
-    if (isPaused) return;  // Prevent multiple calls
+    if (isPaused) return;
     
     isPaused = true;
-    playerCar?.stop();
-    aiCar?.stop();
     background?.stopBackground();
     road?.stopRoad();
-
-
     
     print("Game has ended, all movement stopped.");
   }
-
   @override
   void update(double dt) {
     if (isPaused) return;

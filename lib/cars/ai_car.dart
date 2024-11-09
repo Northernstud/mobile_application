@@ -25,7 +25,7 @@ class AiCar extends SpriteComponent with HasGameRef<GoGreenGame> {
 
     // Only move if isMoving is true
     if (isMoving) {
-      position.y -= 10 * dt;
+      position.y -= 100 * dt;
 
       // Check if the car has reached the finish line
       if (position.y <= -420) {
