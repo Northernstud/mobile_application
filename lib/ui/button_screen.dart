@@ -4,10 +4,10 @@ import 'package:mobile_application/game/go_green_game.dart';
 import 'package:mobile_application/game/go_green_world.dart';
 
 class ButtonScreen extends StatefulWidget {
-  ButtonScreen({super.key, required this.game, required this.world});
-
   final GoGreenGame game;
   final GoGreenWorld world;
+
+  ButtonScreen({super.key, required this.game, required this.world});
 
   @override
   _ButtonScreenState createState() => _ButtonScreenState();
@@ -18,7 +18,7 @@ class _ButtonScreenState extends State<ButtonScreen> {
   late List<int> answerList;
   late int correctAnswer;
   late List<Color> buttonColors;
-  bool buttonsEnabled = true; // Flag to disable buttons
+  bool buttonsEnabled = true;
 
   @override
   void initState() {
@@ -27,11 +27,9 @@ class _ButtonScreenState extends State<ButtonScreen> {
   }
 
   void _generateAnswers() {
-    // Fetch the latest numbers from GoGreenWorld
     correctAnswer = widget.world.numbers.reduce((a, b) => a + b);
-
-    // Create a set to store unique answers
     Set<int> answers = {correctAnswer};
+
     while (answers.length < 4) {
       int randomAnswer = _random.nextInt(21);
       if (randomAnswer != correctAnswer) {
@@ -39,18 +37,14 @@ class _ButtonScreenState extends State<ButtonScreen> {
       }
     }
 
-    // Convert set to list and shuffle
-    answerList = answers.toList();
-    answerList.shuffle(_random);
-
-    // Initialize button colors
+    answerList = answers.toList()..shuffle(_random);
     buttonColors = List<Color>.filled(4, Colors.white);
   }
 
   @override
   Widget build(BuildContext context) {
-    double buttonWidth = 450;
-    double buttonHeight = 150;
+    const double buttonWidth = 450;
+    const double buttonHeight = 150;
 
     List<Offset> positions = [
       const Offset(40, 1500),
@@ -61,37 +55,41 @@ class _ButtonScreenState extends State<ButtonScreen> {
 
     return Stack(
       children: List.generate(answerList.length, (index) {
-        return Positioned(
-          left: positions[index].dx,
-          top: positions[index].dy,
-          child: GestureDetector(
-            onTap: buttonsEnabled ? () => _handleTap(index) : null,
-            child: Container(
-              width: buttonWidth,
-              height: buttonHeight,
-              decoration: BoxDecoration(
-                color: buttonColors[index],
-                borderRadius: BorderRadius.circular(20),
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                answerList[index].toString(),
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 60,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        );
+        return _buildAnswerButton(index, positions[index], buttonWidth, buttonHeight);
       }),
     );
   }
 
+  Widget _buildAnswerButton(int index, Offset position, double width, double height) {
+    return Positioned(
+      left: position.dx,
+      top: position.dy,
+      child: GestureDetector(
+        onTap: buttonsEnabled ? () => _handleTap(index) : null,
+        child: Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: buttonColors[index],
+            borderRadius: BorderRadius.circular(20),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            answerList[index].toString(),
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 60,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   void _handleTap(int index) {
-    if (widget.world.isPaused) return;  // Don't handle taps if game is paused
-    
+    if (widget.world.isPaused) return;
+
     bool isCorrect = answerList[index] == correctAnswer;
     setState(() {
       buttonColors[index] = isCorrect ? Colors.green : Colors.red;
@@ -100,8 +98,7 @@ class _ButtonScreenState extends State<ButtonScreen> {
 
     if (isCorrect) {
       widget.world.setAnswerCorrect(true);
-
-      if (!widget.world.isPaused) {  // Only schedule new question if game isn't paused
+      if (!widget.world.isPaused) {
         Future.delayed(const Duration(seconds: 1), () {
           setState(() {
             widget.world.setNewQuestion(true);

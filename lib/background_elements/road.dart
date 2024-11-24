@@ -5,22 +5,34 @@ import 'package:flutter/material.dart';
 import 'package:mobile_application/constants.dart';
 
 class Road extends ParallaxComponent {
-void stopRoad() {
-    parallax?.baseVelocity = Vector2.zero();
-}
+  static Vector2 initialBaseVelocity = Vector2(0, -800);
+  static Vector2 velocityMultiplier = Vector2(1.0, 1.0);
+  static const double initialXOffset = -220.0;
 
   @override
   Future<void> onLoad() async {
     super.onLoad();
+    await _loadParallax();
+    _initializePosition();
+  }
 
+  Future<void> _loadParallax() async {
     parallax = await Parallax.load(
       [ParallaxImageData('road_3.png')],
-      baseVelocity: Vector2(0, -800),
-      velocityMultiplierDelta: Vector2(1.0, 1.0),
+      baseVelocity: initialBaseVelocity,
+      velocityMultiplierDelta: velocityMultiplier,
       repeat: ImageRepeat.repeatY,
     );
+  }
 
-    position = Vector2(-220, -gameHeight / 2);//-220
+  void _initializePosition() {
+    position = Vector2(initialXOffset, -gameHeight / 2);
     anchor = Anchor.topLeft;
+  }
+
+  void stopRoad() {
+    if (parallax != null) {
+      parallax!.baseVelocity = Vector2.zero();
+    }
   }
 }
