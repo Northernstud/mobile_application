@@ -1,79 +1,137 @@
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
-import 'package:mobile_application/ui/login/user_model.dart';
+void main() {
+  runApp(MyApp());
+}
 
-class Api {
-  static const baseUrl = "http://144.121.83.58/api/"; //ip
-
-  static addUser(Map udata) async {
-    print(udata);
-    var url = Uri.parse("${baseUrl}add_user");
-
-    try {
-      final res = await http.post(url, body: udata);
-
-      if (res.statusCode == 200) {
-        var data = jsonDecode(res.body.toString());
-        print(data);
-      } else {
-        print("failed to get response");
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Auth Demo',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: AuthPage(),
+    );
   }
+}
 
-  static getUser() async {
-    List<User> users = [];
+class AuthPage extends StatefulWidget {
+  @override
+  _AuthPageState createState() => _AuthPageState();
+}
 
-    var url = Uri.parse("${baseUrl}add_user");
+class _AuthPageState extends State<AuthPage> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  bool _isLogin = true;
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final username = _usernameController.text;
+    final email = _emailController.text;
+    final password = _passwordController.text;
+    final url = _isLogin
+        ? Uri.parse('http://localhost:3306/login')
+        : Uri.parse('http://localhost:3306/signup');
+
+    final body = _isLogin
+        ? {'username': username, 'password': password}
+        : {'username': username, 'email': email, 'password': password};
 
     try {
-      final res = await http.get(url);
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
 
-      if (res.statusCode == 200) {
-        var data = jsonDecode(res.body.toString());
+      final data = jsonDecode(response.body);
 
-        data['users'].forEach(
-          (value) => {
-            users.add(
-              User(value['uid'].toString(), value['uname'], value['uemail'],
-                  value['upassword']),
-            ),
-          },
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['message'])),
         );
-
-        print(data);
-        return users;
       } else {
-        return [];
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['error'] ?? 'Unknown error')),
+        );
       }
-    } catch (e) {
-      debugPrint(e.toString());
+    } catch (err) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to connect to the server')), 
+      );
     }
   }
 
-  static updateUser(id, body) async {
-    var url = Uri.parse("${baseUrl}update/$id");
-    final res = await http.put(url, body: body);
-
-    if (res.statusCode == 200) {
-      print(jsonDecode(res.body));
-    } else {
-      print("Failed to update data");
-    }
-  }
-
-  static deleteUser(id, body) async {
-    var url = Uri.parse("${baseUrl}delete/$id");
-    final res = await http.post(url);
-
-    if (res.statusCode == 204) {
-      print(jsonDecode(res.body));
-    } else {
-      print("Failed to delete");
-    }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(_isLogin ? 'Login' : 'Signup')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextFormField(
+                controller: _usernameController,
+                decoration: const InputDecoration(labelText: 'Username'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your username';
+                  }
+                  return null;
+                },
+              ),
+              if (!_isLogin)
+                TextFormField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(labelText: 'Email'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty || !value.contains('@')) {
+                      return 'Please enter a valid email';
+                    }
+                    return null;
+                  },
+                ),
+              TextFormField(
+                controller: _passwordController,
+                decoration: const InputDecoration(labelText: 'Password'),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty || value.length < 6) {
+                    return 'Password must be at least 6 characters';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _submit,
+                child: Text(_isLogin ? 'Login' : 'Signup'),
+              ),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _isLogin = !_isLogin;
+                  });
+                },
+                child: Text(
+                  _isLogin ? 'Don\'t have an account? Sign up' : 'Already have an account? Login',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

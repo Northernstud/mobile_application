@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:mobile_application/constants.dart';
@@ -12,7 +14,7 @@ class GoGreenGame extends FlameGame {
           width: gameWidth,
           height: gameHeight,
         )) {
-    gameWorld = GoGreenWorld();
+    gameWorld = GoGreenWorld([Random().nextInt(10), Random().nextInt(10)]);
     world = gameWorld;
   }
 

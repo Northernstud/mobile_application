@@ -38,7 +38,7 @@ class AiCar extends SpriteComponent with HasGameRef<GoGreenGame> {
 
   //car speed
   void _moveCar(double dt) {
-    position.y -= 10 * dt;
+    position.y -= 11 * dt;
   }
 
   void _checkFinishLine() {

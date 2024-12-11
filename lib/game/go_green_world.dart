@@ -5,7 +5,6 @@ import 'package:flame/components.dart';
 import 'package:mobile_application/cars/ai_car.dart';
 import 'package:mobile_application/background_elements/background.dart';
 import 'package:mobile_application/background_elements/finish.dart';
-import 'package:mobile_application/constants.dart';
 import 'package:mobile_application/game/go_green_game.dart';
 import 'package:mobile_application/cars/car.dart';
 import 'package:mobile_application/ui/progress_bar.dart';
@@ -14,7 +13,8 @@ import 'package:mobile_application/background_elements/road.dart';
 
 class GoGreenWorld extends World with HasGameRef<GoGreenGame> {
   final Random _random = Random();
-  final List<int> numbers = [Random().nextInt(10), Random().nextInt(10)];
+  final List<int> numbers;
+//[Random().nextInt(10), Random().nextInt(10)]
 
   Car? playerCar;
   AiCar? aiCar;
@@ -26,6 +26,8 @@ class GoGreenWorld extends World with HasGameRef<GoGreenGame> {
   bool correctness = false;
   bool newQuestion = false;
   bool isPaused = false;
+
+  GoGreenWorld(this.numbers);
 
   List<int> generateUniqueAnswers(
       int correctAnswer, int numAnswers, int min, int max) {
@@ -53,14 +55,13 @@ class GoGreenWorld extends World with HasGameRef<GoGreenGame> {
 
     // Initialize the progress bar after sprites are loaded
     progressBar = ProgressBar(
-      barHeight: 45,
+      barHeight: 60,
       playerProgress: 0.0,
       aiProgress: 0.0,
       playerIcon: playerIcon,
       aiIcon: aiIcon,
       finishIcon: finishIcon,
     );
-
 
     add(background!);
     add(road!);
@@ -72,8 +73,8 @@ class GoGreenWorld extends World with HasGameRef<GoGreenGame> {
   }
 
   void _initializeCars() {
-    playerCar = Car(115, "player_car-removebg-preview.png", 700);
-    aiCar = AiCar(-120, "ai_car-removebg-preview.png", 700);
+    playerCar = Car(115, "player_car.png", 700);
+    aiCar = AiCar(-120, "ai_car.png", 700);
   }
 
   void _generateAndShuffleAnswers() {
@@ -81,7 +82,6 @@ class GoGreenWorld extends World with HasGameRef<GoGreenGame> {
     final List<int> allAnswers = generateUniqueAnswers(correctAnswer, 4, 0, 20);
     allAnswers.shuffle(_random);
   }
-
 
   void _initializeBackgroundElements() {
     finish = Finish()
