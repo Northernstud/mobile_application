@@ -22,7 +22,7 @@ class AiCar extends SpriteComponent with HasGameRef<GoGreenGame> {
     size = Vector2(100, 200);
   }
 
-  void _initializePosition() {
+  Future<void> _initializePosition() async {
     position = Vector2(initialXPosition, gameHeight / 2 - initialYPosition);
     anchor = Anchor.topCenter;
   }

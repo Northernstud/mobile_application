@@ -1,11 +1,13 @@
+
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_application/constants.dart';
 
 class Question extends PositionComponent {
   final List<int> numbers;
+  final String action;
 
-  Question({required this.numbers}) {
+  Question({required this.numbers, required this.action}) {
     size = Vector2(gameWidth * 3 / 4, 200);
     position = Vector2(0, -gameHeight / 2 + 200);
     anchor = Anchor.center;
@@ -40,7 +42,7 @@ class Question extends PositionComponent {
   void _drawQuestionText(Canvas canvas) {
     final textPainter = TextPainter(
       text: TextSpan(
-        text: '${numbers[0]} + ${numbers[1]} = ?',
+        text: '${numbers[0]} $action ${numbers[1]} = ?',
         style: const TextStyle(
           color: Colors.black,
           fontSize: 60,

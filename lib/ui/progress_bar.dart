@@ -1,6 +1,8 @@
+
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_application/constants.dart';
+
 
 class ProgressBar extends PositionComponent with HasGameRef {
   final double barHeight;

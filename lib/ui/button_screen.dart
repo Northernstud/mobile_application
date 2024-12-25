@@ -1,7 +1,9 @@
 import 'dart:math';
+import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_application/game/go_green_game.dart';
 import 'package:mobile_application/game/go_green_world.dart';
+
 
 class ButtonScreen extends StatefulWidget {
   final GoGreenGame game;
@@ -27,7 +29,15 @@ class _ButtonScreenState extends State<ButtonScreen> {
   }
 
   void _generateAnswers() {
-    correctAnswer = widget.world.numbers.reduce((a, b) => a + b);
+    if (widget.world.action == '+'){
+      correctAnswer = widget.world.numbers.reduce((a, b) => a + b);
+    } else if (widget.world.action == '*'){
+      correctAnswer = widget.world.numbers.reduce((a, b) => a * b);
+    } else if (widget.world.action == '-'){
+      correctAnswer = widget.world.numbers.reduce((a, b) => a - b);
+    } else {
+      correctAnswer = widget.world.numbers.reduce((a, b) => a ~/ b);
+    }
     Set<int> answers = {correctAnswer};
 
     while (answers.length < 4) {

@@ -1,20 +1,22 @@
 import 'dart:async';
 import 'dart:math';
 
+
 import 'package:flame/components.dart';
-import 'package:mobile_application/cars/ai_car.dart';
 import 'package:mobile_application/background_elements/background.dart';
 import 'package:mobile_application/background_elements/finish.dart';
-import 'package:mobile_application/game/go_green_game.dart';
+import 'package:mobile_application/background_elements/road.dart';
+import 'package:mobile_application/cars/ai_car.dart';
 import 'package:mobile_application/cars/car.dart';
+import 'package:mobile_application/game/go_green_game.dart';
 import 'package:mobile_application/ui/progress_bar.dart';
 import 'package:mobile_application/ui/questions.dart';
-import 'package:mobile_application/background_elements/road.dart';
+
 
 class GoGreenWorld extends World with HasGameRef<GoGreenGame> {
   final Random _random = Random();
-  final List<int> numbers;
-//[Random().nextInt(10), Random().nextInt(10)]
+  final List<int> numbers; //[Random().nextInt(10), Random().nextInt(10)]
+  final String action;
 
   Car? playerCar;
   AiCar? aiCar;
@@ -27,7 +29,7 @@ class GoGreenWorld extends World with HasGameRef<GoGreenGame> {
   bool newQuestion = false;
   bool isPaused = false;
 
-  GoGreenWorld(this.numbers);
+  GoGreenWorld(this.numbers, this.action);
 
   List<int> generateUniqueAnswers(
       int correctAnswer, int numAnswers, int min, int max) {
@@ -68,7 +70,7 @@ class GoGreenWorld extends World with HasGameRef<GoGreenGame> {
     add(finish!);
     if (playerCar != null) add(playerCar!);
     if (aiCar != null) add(aiCar!);
-    add(Question(numbers: numbers));
+    add(Question(numbers: numbers, action: action));
     add(progressBar);
   }
 
@@ -78,10 +80,33 @@ class GoGreenWorld extends World with HasGameRef<GoGreenGame> {
   }
 
   void _generateAndShuffleAnswers() {
-    final int correctAnswer = numbers[0] + numbers[1];
-    final List<int> allAnswers = generateUniqueAnswers(correctAnswer, 4, 0, 20);
-    allAnswers.shuffle(_random);
+  final int correctAnswer;
+
+  if (action == '+') {
+    correctAnswer = numbers[0] + numbers[1];
+  } else if (action == '*') {
+    correctAnswer = numbers[0] * numbers[1];
+  } else if (action == '/') {
+    // Generate valid numbers for division
+    numbers[1] = _random.nextInt(9) + 1; // numbers[1] is between 1 and 9 (non-zero)
+
+    // Ensure numbers[0] is divisible by numbers[1]
+    int multiplier = _random.nextInt(10) + 1; // Random multiplier (between 1 and 10)
+    numbers[0] = numbers[1] * multiplier; // numbers[0] is guaranteed to be a multiple of numbers[1]
+
+    // Correct answer: integer division
+    correctAnswer = numbers[0] ~/ numbers[1]; // Use integer division to ensure an integer result
+  } else { // Default to subtraction case
+    correctAnswer = numbers[0] - numbers[1];
   }
+
+  // Generate a list of unique answers
+  final List<int> allAnswers = generateUniqueAnswers(correctAnswer, 4, 0, 20);
+  allAnswers.shuffle(_random);
+}
+
+
+
 
   void _initializeBackgroundElements() {
     finish = Finish()

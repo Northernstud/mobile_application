@@ -3,6 +3,7 @@ import 'package:flame/components.dart';
 import 'package:mobile_application/constants.dart';
 import 'package:mobile_application/game/go_green_game.dart';
 
+
 class Car extends SpriteComponent with HasGameRef<GoGreenGame> {
   final double initialXPosition;
   final double initialYPosition;

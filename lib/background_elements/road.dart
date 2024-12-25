@@ -4,6 +4,7 @@ import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_application/constants.dart';
 
+
 class Road extends ParallaxComponent {
   static Vector2 initialBaseVelocity = Vector2(0, -800);
   static Vector2 velocityMultiplier = Vector2(1.0, 1.0);
